@@ -12,5 +12,5 @@
 * @param ci Le istruzioni per eseguire la legge di moto.
 * @param s Il Servo motore da controllare.
 */
-void treTratti(Instructions &ci, Servo &s);
+void treTratti(Instructions ci, Servo *s);
 

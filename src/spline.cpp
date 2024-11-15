@@ -54,7 +54,7 @@ static std::vector<double> gaussian_elimination(std::vector<std::vector<double>>
     return X;  // Restituisco il vettore soluzione
 }
 
-void spline(std::vector<double> &tempi, std::vector<double> &punti, Servo &s) {
+void spline(std::vector<double> &tempi, std::vector<double> &punti, Servo s) {
 #if MATLAB_COMPILE
     auto ML = getMatLAB();
 #endif

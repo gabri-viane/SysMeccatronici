@@ -10,7 +10,7 @@
 
 //Definisce il massimo numero di punti che si possono simulare
 #define LENGTH_VALS 10000
-//Definisce il massimo numero di tratti di cui una legge di moto può essere composta
+//Definisce il massimo numero di tratti di cui una legge di moto puï¿½ essere composta
 #define LENGTH_STEPS 7
 
 /*
@@ -61,14 +61,14 @@ public:
 	void appendAccData(double time, double acceleration);
 	/**
 	* Aggiunge un nuovo commento nel file script al punto 
-	* corrente in cui la scrittura è arrivata.
+	* corrente in cui la scrittura ï¿½ arrivata.
 	* 
 	* @param comment la stringa da inserire come commento
 	*/
 	void addComment(const std::string comment);
 	/**
 	* Aggiunge un nuovo commento nel file script al punto
-	* corrente in cui la scrittura è arrivata.
+	* corrente in cui la scrittura Ã¨ arrivata.
 	* 
 	* @param comment la stringa da inserire come commento
 	*/
@@ -108,7 +108,7 @@ public:
 /**
 * Crea una nuova istanza globale della classe MatLAB.
 * 
-* @param file_name Il nome del file in cui lo stream andrà a scrivere i comandi MATLAB
+* @param file_name Il nome del file in cui lo stream andrï¿½ a scrivere i comandi MATLAB
 * 
 * @return Il puntatore alla variabile globale appena creata.
 */

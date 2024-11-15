@@ -1,4 +1,6 @@
 #include "Simulation.h"
+
+#if SIMULATE_COMMUNICATION
 #include <Windows.h>
 
 Serial_ Serial;
@@ -33,3 +35,4 @@ void Serial_::insertBuffer(char* buffer, int size)
 		memset((void*)&(this->buffer[size]), 0, MAX_MESSAGE_LENGTH - size);
 	}
 }
+#endif

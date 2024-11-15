@@ -4,6 +4,7 @@
 
 #include "comms.h"
 
+#if SIMULATE_COMMUNICATION
 class Serial_ {
 private:
 	char buffer[MAX_MESSAGE_LENGTH]{};
@@ -16,5 +17,6 @@ public:
 };
 
 extern Serial_ Serial;
+#endif
 #endif // !SIMULATION_INCLUDED
 

@@ -29,7 +29,7 @@ public:
 	* Gestisce le richieste per eseguire una simulazione
 	* di una legge di moto trapezoidale.
 	*/
-	void handleTreTratti() const;
+	void handleTreTratti();
 	/**
 	* Gestisce le richieste per eseguire una simulazione
 	* di una legge di moto sette tratti.

@@ -44,7 +44,7 @@ void Menu::startMenu() {
 	s.attach(pin);
 	this->pin = pin;
 
-	//Queste linee di codice si occupano di mostrare il menù e richiedere
+	//Queste linee di codice si occupano di mostrare il menï¿½ e richiedere
 	//all'utente di scegliere un'operazione 
 	while (true) {
 		std::cout << "Scegli operazione:\n\t1) Tre tratti\n\t2) Sette tratti\n\t3) Spline\n\t0) Esci\nInserisci scelta: ";
@@ -77,12 +77,15 @@ le istruzioni iniziali.
 static Instructions generateInstructions(bool sette_tratti) {
 	CondizioniIniziali ci{ 0,0,0 };
 	std::cout << "\n------------------\nCONDIZIONI INIZIALI\n------------------\n";
-	std::cout << "\nAngolo iniziale (°): ";
-	std::cin >> ci.angolo_inizio;
-	std::cout << "\nVelocita' iniziale (°/s): ";
-	std::cin >> ci.velocita_inizio;
+	int tmp;
+	std::cout << "\nAngolo iniziale (Â°): ";
+	std::cin >> tmp;
+	ci.angolo_inizio = tmp;
+	std::cout << "\nVelocita' iniziale (Â°/s): ";
+	std::cin >> tmp;
+	ci.velocita_inizio = tmp;
 	if (sette_tratti) {
-		std::cout << "\nAccelerazione iniziale (°/s^2): ";
+		std::cout << "\nAccelerazione iniziale (Â°/s^2): ";
 		std::cin >> ci.accelerazione_inizio;
 	}
 
@@ -93,27 +96,40 @@ static Instructions generateInstructions(bool sette_tratti) {
 		std::cin >> lmbs.increm_lin;
 	}
 	std::cout << "\nCoeff. acc.cost. T1: ";
-	std::cin >> lmbs.cost_1;
+	std::cin >> tmp;
+	lmbs.cost_1 = tmp;
 	std::cout << "\nCoeff. acc.cost. T2: ";
-	std::cin >> lmbs.cost_2;
+	std::cin >> tmp;
+	lmbs.cost_2 = tmp;
 	std::cout << "\nCoeff. acc.cost. T3: ";
-	std::cin >> lmbs.cost_3;
+	std::cin >> tmp;
+	lmbs.cost_3 = tmp;
 
-	if ((lmbs.cost_1 + lmbs.cost_2 + lmbs.cost_3 + lmbs.increm_lin * 4) != 1.0) {
+	if ((lmbs.cost_1 + lmbs.cost_2 + lmbs.cost_3 + lmbs.increm_lin * 4) != 10) {
 		std::cout << "\n!! I coefficienti scelti non hanno somma pari ad 1 !!\n";
 	}
 
-	Instructions inst{ ci,0,lmbs,0 };
+	Instructions inst{ ci,lmbs,0,0,0 };
+	int tmp_delta;
 	std::cout << "\n------------------\nDATI\n------------------\n";
-	std::cout << "\nDelta angolo da percorrere (°): ";
-	std::cin >> inst.delta_angolo;
-	std::cout << "\nTempo di percorrenza (ms): ";
-	std::cin >> inst.tempo_tot_ms;
+	std::cout << "\nDelta angolo da percorrere (Â°): ";
+	std::cin >> tmp_delta;
+	std::cout << "\nTempo di percorrenza (s): ";
+	std::cin >> tmp;
+	inst.tempo_tot_ms = tmp;
+	if (tmp_delta < 0) {
+		inst.delta_angolo = (unsigned char) - tmp_delta;
+		inst.segno = (unsigned char)0;
+	}
+	else {
+		inst.delta_angolo = (unsigned char)tmp_delta;
+		inst.segno = (unsigned char)2;
+	}
 
 	return inst;
 }
 
-void Menu::handleTreTratti() const {
+void Menu::handleTreTratti() {
 #if MATLAB_COMPILE
 	std::cout << "Inserisci il nome del file MATLAB da generare: ";
 	std::string nome_file;
@@ -126,7 +142,7 @@ void Menu::handleTreTratti() const {
 
 	Instructions inst = generateInstructions(false);
 
-	treTratti(inst, s);
+	treTratti(inst, &s);
 #if MATLAB_COMPILE
 	M->writeData();
 	M->flushData();

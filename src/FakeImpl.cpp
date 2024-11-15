@@ -10,6 +10,11 @@ void delay(double time) {
 	std::cout << "Waiting for: " << time << std::endl;
 }
 
+void digitalWrite(int pin, int mode)
+{
+	std::cout << "Setting [" << pin << "] to : " << mode << std::endl;
+}
+
 void Servo::attach(int i) {
 	std::cout << "Attaching to " << i << std::endl;
 }

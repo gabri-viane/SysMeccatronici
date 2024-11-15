@@ -17,24 +17,24 @@
 #endif
 //Rappresenta il carattere di chiusura messaggio (devono essere inviati in sequenza 2 caratteri)
 #ifndef STARTING_STREAM_CHAR
-#define STARTING_STREAM_CHAR 01
+#define STARTING_STREAM_CHAR (char)1
 #endif
 //Rappresenta il carattere di chiusura messaggio (devono essere inviati in sequenza 2 caratteri)
 #ifndef CLOSING_STREAM_CHAR
-#define CLOSING_STREAM_CHAR 04
+#define CLOSING_STREAM_CHAR (char)4
 #endif
 
 
-#define COMPILE_FOR_PC 1
+#define COMPILE_FOR_PC 0
 
 //Serve per utilizzare le librerie di Arduino, altrimenti utilizza quelle simulate (FakeArduino.h, FakeServo.h)
 //Per compilare questa parte mettere il valore a 1
 #define USE_ARDUINO_H !COMPILE_FOR_PC
 
-#define SIMULATE_COMMUNICATION 1 && COMPILE_FOR_PC
+#define SIMULATE_COMMUNICATION (0 && COMPILE_FOR_PC)
 
 //Per compilare il codice che utilizza la parte matlab mettere il valore a 1
-#define MATLAB_COMPILE COMPILE_FOR_PC && !SIMULATE_COMMUNICATION
+#define MATLAB_COMPILE (COMPILE_FOR_PC && !SIMULATE_COMMUNICATION)
 //Per compilare il codice che utilizza la parte di Arduino mettere il valore a 1
 #define ARDUINO_COMPILE !COMPILE_FOR_PC
 //Se abilitato include tutta la gestione nella parte PC e nella parte arduino per la compilazione del
@@ -58,9 +58,9 @@
 angolo_inizio ; velocita_inizio ; accelerazione_inizio
 */
 struct CondizioniIniziali {
-    float angolo_inizio;
-    float velocita_inizio;
-    double accelerazione_inizio;
+    unsigned char angolo_inizio; //float
+    char velocita_inizio; //float
+    char accelerazione_inizio; //double
 };
 
 /*
@@ -79,10 +79,10 @@ Costanti di tempo dei tratti
 increm_lin ; cost_1 ; cost_2 ; cost_3 ;
 */
 struct Lambdas {
-    float increm_lin;
-    float cost_1;
-    float cost_2;
-    float cost_3;
+    char increm_lin; //float
+    char cost_1; //float
+    char cost_2; //float
+    char cost_3; //float
 };
 
 /*
@@ -91,12 +91,14 @@ Istruzioni per gestire la sette tratti
 struct Instructions {
     // Condizioni iniziali da cui partire
     CondizioniIniziali ci;
-    // Tempo totale richiesto per eseguire la legge di moto
-    unsigned long long int tempo_tot_ms;
     // I coefficienti di tempo dei tratti
     Lambdas lambdas;
+    // se 0 = -, se 2 = +
+    unsigned char segno;
     // Lo spazio da percorrere oppure posizione da raggiungere se la legge è COMANDO_DIRETTO
-    double delta_angolo;
+    unsigned char delta_angolo;
+    // Tempo totale richiesto per eseguire la legge di moto
+    unsigned char tempo_tot_ms;
 };
 
 /*
