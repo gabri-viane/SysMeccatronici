@@ -1,5 +1,11 @@
 #include "Simulation.h"
 
+
+/***************************************
+* IMPLEMENTAZIONE DI UNA SERIALE FINTA *
+****************************************/
+
+
 #if SIMULATE_COMMUNICATION
 #include <Windows.h>
 

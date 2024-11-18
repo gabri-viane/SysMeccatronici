@@ -65,145 +65,58 @@ static void executeInstruction(CommInstruction* inst) {
 
 bool parseInstruction(CommInstruction* inst, Servo* s, unsigned short* tempoRicevuto) {
     char data;
-    switch (inst->status) {
+    switch (inst->status) {//controllo lo status del messaggio che sto ricevendo
         case STATUS_VOID:
-            if (Serial.available()) {
-                data = Serial.read();
-                if (data == STARTING_STREAM_CHAR) {
-#if USE_ARDUINO_H
-                    digitalWrite(7, LOW);
-                    digitalWrite(8, LOW);
-                    digitalWrite(9, LOW);
-                    digitalWrite(10, LOW);
-                    digitalWrite(11, HIGH);
-#endif
-                    inst->status = STATUS_START_READING;
+            if (Serial.available()) {//Solo se ho dati nella seriale proseguo (uguale per tutti i casi)
+                data = Serial.read();//Leggo il byte
+                if (data == STARTING_STREAM_CHAR) {//Se è il byte di inizio
+                    inst->status = STATUS_START_READING;//Mi porto ad aspettare il secondo byte di inizio (la conferma)
                 }
-#if USE_ARDUINO_H
-                else {
-
-                    digitalWrite(7, LOW);
-                    digitalWrite(8, LOW);
-                    digitalWrite(9, LOW);
-                    digitalWrite(10, LOW);
-                    digitalWrite(11, LOW);
-                }
-#endif
             }
             break;
         case STATUS_START_READING:
             if (Serial.available()) {
-                data = Serial.read();
-                if (data == STARTING_STREAM_CHAR) {
-                    inst->status = STATUS_READING;
+                data = Serial.read();//Leggo il byte
+                if (data == STARTING_STREAM_CHAR) {//Se il byte che ricevo è il secondo byte di inizio 
+                    inst->status = STATUS_READING;//mi porto in lettura del messaggio
                 } else {
-                    inst->status = STATUS_VOID;
+                    inst->status = STATUS_VOID;//Altrimenti non è un messaggio di mia competenza e torno in attesa (VOID)
                 }
             }
             break;
         case STATUS_READING:
             if (Serial.available()) {
                 data = Serial.read();
-                if (inst->size == 0) {
-                    inst->size = (unsigned char)data;
+                if (inst->size == 0) { //Se non ho ancora ricevuto la dimensione del messaggio
+                    inst->size = (unsigned char)data; //imposto il byte letto come dimensione del messaggio
                     // In questo caso sto leggendo il primo valore del messaggio
                     // ovvero la lunghezza che mi verrà inviata
                     return false;
                 }
                 if (data == CLOSING_STREAM_CHAR && inst->sizeReceived == inst->size) {  // controllo di aver almeno ricevuto tutto il messaggio
-                    inst->status = STATUS_SHOULD_COMPLETE;
+                    inst->status = STATUS_SHOULD_COMPLETE;//Se ho ricevuto tutto il messaggio e il carattere corrente è il carattere di chiusura mi porto in attesa di completamento
                 }
-                inst->message[inst->sizeReceived] = data;
-                inst->sizeReceived++;
+                inst->message[inst->sizeReceived] = data; //salvo il dato ricevuto nel messaggio
+                inst->sizeReceived++;//incremento il numero di byte ricevuti
             }
             break;
         case STATUS_SHOULD_COMPLETE:
             if (Serial.available()) {
                 data = Serial.read();
-                if (data == CLOSING_STREAM_CHAR) {
-                    inst->status = STATUS_COMPLETED;
+                if (data == CLOSING_STREAM_CHAR) {//Se ricevo anche il secondo byte che indica la chiusura del messaggio
+                    inst->status = STATUS_COMPLETED;//Mi porto allo stato completo
                 } else {
-                    inst->status = STATUS_READING;
+                    inst->status = STATUS_READING; //Altrimenti ritorno in lettura
                 }
                 inst->message[inst->sizeReceived] = data;
                 inst->sizeReceived++;
             }
             break;
-        case STATUS_COMPLETED:
-#if USE_ARDUINO_H
-            digitalWrite(8, LOW);
-            digitalWrite(8, LOW);
-            digitalWrite(9, LOW);
-            digitalWrite(11, LOW);
-            digitalWrite(10, HIGH);
-#endif
-            executeInstruction(inst);
-            switch (inst->inst.swi->law) {
+        case STATUS_COMPLETED://Ho finito di leggere il messaggio (nel loop precedente)
+            executeInstruction(inst);//Leggo il messaggio e lo deserializzo di nuovo in una struct
+            switch (inst->inst.swi->law) {//eseguo la legge di moto ricevuta
                 case TRE_TRATTI:
-                    Instructions ci = *inst->inst.swi->Dati_Tre_Sette_Tratti;
-#if USE_ARDUINO_H
-                    *tempoRicevuto = ci.delta_angolo;
-                    if (ci.lambdas.cost_1 == 2) {
-                        digitalWrite(9, HIGH);
-                        delay(3000);
-                        digitalWrite(9, LOW);
-                    } else {
-                        digitalWrite(7, HIGH);
-                        delay(3000);
-                        digitalWrite(7, LOW);
-                    }
-					delay(1000);
-					if (ci.lambdas.cost_2 == 6) {
-                        digitalWrite(9, HIGH);
-                        delay(3000);
-                        digitalWrite(9, LOW);
-                    } else {
-                        digitalWrite(7, HIGH);
-                        delay(3000);
-                        digitalWrite(7, LOW);
-                    }
-					delay(1000);
-					if (ci.lambdas.cost_3 == 2) {
-                        digitalWrite(9, HIGH);
-                        delay(3000);
-                        digitalWrite(9, LOW);
-                    } else {
-                        digitalWrite(7, HIGH);
-                        delay(3000);
-                        digitalWrite(7, LOW);
-                    }
-					delay(1000);
-					if (ci.segno == 2) {
-                        digitalWrite(9, HIGH);
-                        delay(3000);
-                        digitalWrite(9, LOW);
-                    } else {
-                        digitalWrite(7, HIGH);
-                        delay(3000);
-                        digitalWrite(7, LOW);
-                    }
-					delay(1000);
-					if (ci.delta_angolo == 180) {
-                        digitalWrite(9, HIGH);
-                        delay(3000);
-                        digitalWrite(9, LOW);
-                    } else {
-                        digitalWrite(7, HIGH);
-                        delay(3000);
-                        digitalWrite(7, LOW);
-                    }
-					delay(1000);
-					if (ci.tempo_tot_ms == 5) {
-                        digitalWrite(9, HIGH);
-                        delay(3000);
-                        digitalWrite(9, LOW);
-                    } else {
-                        digitalWrite(7, HIGH);
-                        delay(3000);
-                        digitalWrite(7, LOW);
-                    }
-#endif
-                    treTratti(ci, s);
+                    treTratti(*inst->inst.swi->Dati_Tre_Sette_Tratti, s);
                     break;
                 case SETTE_TRATTI:
                     setteTratti(*inst->inst.swi->Dati_Tre_Sette_Tratti, *s);
@@ -212,18 +125,19 @@ bool parseInstruction(CommInstruction* inst, Servo* s, unsigned short* tempoRice
                     executeSplineConversion(inst, *s);
                     break;
                 case COMANDO_DIRETTO:
+                    //Non implementato
                     break;
             }
-            // delete inst->inst.swi;
+            //Elimino l'istruzione
+            delete inst->inst.swi;
+            //Trono nello stato VOID
             inst->status = STATUS_VOID;
+            //Pulisco il buffer
             memset((void*)inst->message, (char)0, inst->sizeReceived);
+            //Riporto nello stato iniziale
             inst->sizeReceived = 0;
             inst->size = 0;
-#if USE_ARDUINO_H
-            delay(5000);
-            digitalWrite(10, LOW);
-#endif
-            return true;
+            return true;//Restituisco true solo se ho completato ed eseguito un messaggio
     }
     return false;
 }
@@ -241,17 +155,22 @@ void executeSplineConversion(CommInstruction* inst, Servo s) {
 
 ServoWriteInst* parseServoWrite(CommInstruction* ci) {
     ServoWriteInst* result{nullptr};
-    switch (ci->message[2]) {
+    //all'indice 2 del messaggio è presente il codice della legge di moto inviata
+    //all'indice 1 del messaggio è presente il pin del servo motore da controllare
+    switch (ci->message[2]) {//controllo cosa mi è stato inviato e ricreo in memoria i dati della legge di moto
         case LawType::TRE_TRATTI:
             result = new ServoWriteInst(ci->message[1], LawType::TRE_TRATTI);
-            memcpy((void*)(result->Dati_Tre_Sette_Tratti), (void*)(&(ci->message[3])), 12);
+            //copio i dati della tre tratti
+            memcpy((void*)(result->Dati_Tre_Sette_Tratti), (void*)(&(ci->message[3])), sizeof(Instructions));
             break;
         case LawType::SETTE_TRATTI:
             result = new ServoWriteInst(ci->message[1], LawType::SETTE_TRATTI);
+            //copio i dati della sette tratti
             memcpy((void*)(result->Dati_Tre_Sette_Tratti), (void*)(&(ci->message[3])), sizeof(Instructions));
             break;
         case LawType::SPLINE:
             result = new ServoWriteInst(ci->message[1], LawType::SPLINE);
+            //copio i dati dell spline
             memcpy((void*)(result->Dati_Spline), (void*)(&(ci->message[3])), sizeof(Instructions));
             break;
     }

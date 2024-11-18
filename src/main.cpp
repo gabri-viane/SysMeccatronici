@@ -21,17 +21,12 @@ void setup() {
     Serial.begin(9600);
     ci = new CommInstruction(buffer);
     s.write(0);
-    pinMode(7, OUTPUT);
-    pinMode(8, OUTPUT);
-    pinMode(9, OUTPUT);
-    pinMode(10, OUTPUT);
-    pinMode(11, OUTPUT);
 }
 
 void loop() {
 #if ENABLE_ARDUINO_COMM
     if (parseInstruction(ci, &s, &tempo)) {
-        delete ci->inst.swi;  // Ricordarsi di eliminare i dati dall'heap
+        //Qui ci va il codice quando viene ricevuto e completato con successo un comando
     }
 #endif
 }
@@ -54,6 +49,8 @@ void loop() {
 #if SIMULATE_COMMUNICATION
 std::atomic<bool> endOfMenu(false);
 
+//Serve come funzione da eseguire in un thread separato su PC
+//per simulare un arduino che riceve e legge i dati.
 static void arduinoSimulator(Servo* s) {
     char msg[MAX_MESSAGE_LENGTH]{};
     CommInstruction* ci = new CommInstruction(msg);
