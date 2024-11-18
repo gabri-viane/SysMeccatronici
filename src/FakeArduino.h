@@ -12,6 +12,9 @@
 */
 void delay(double);
 
+/*
+* Simula la scrittura digitale dei pin di arduino.
+*/
 void digitalWrite(int pin, int mode);
 
 #endif

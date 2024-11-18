@@ -23,13 +23,13 @@ void setteTratti(Instructions inst, Servo s) {
 	// Tempo totale dell'insieme dei tratti 1-2-3
 	double Ta = 2 * tempi[0] + tempi[1];
 	// Calcolo il jerk massimo che ho per arrivare all'angolo richiesto
-	double jerk_max = inst.segno * inst.delta_angolo / ((tempo_s - Ta) * (Ta - tempi[0]) * tempi[0]);
+	double jerk_max = 1.0 * inst.segno * inst.delta_angolo / ((tempo_s - Ta) * (Ta - tempi[0]) * tempi[0]);
 
 	//Condizioni iniziali del primo tratto
 	InfoTratto inext = {
-		inst.ci.angolo_inizio,
-		inst.ci.velocita_inizio,
-		inst.ci.accelerazione_inizio,
+		inst.ci.angolo_inizio *1.0,
+		inst.ci.velocita_inizio * 1.0,
+		inst.ci.accelerazione_inizio * 1.0,
 		0, tempi[0] };
 
 	//Ad ogni tratto aggiorno le condizioni iniziali per il prossimo tratto
