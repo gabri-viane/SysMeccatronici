@@ -15,10 +15,10 @@
 void setteTratti(Instructions inst, Servo s) {
 	double tempo_s = inst.tempo_tot_ms / 1000.0;// Converto da ms a s il tempo totale
 	double tempi[] = {
-		tempo_s * inst.lambdas.increm_lin/10.0,	// tempo tratti accelerazione lineare
-		tempo_s * inst.lambdas.cost_1/10.0,		// tempo tratto m_acc. costante positiva
-		tempo_s * inst.lambdas.cost_2/10.0,		// tempo tratto m_acc. costante nulla
-		tempo_s * inst.lambdas.cost_3/10.0 };	// tempo tratto m_acc. costante negativa
+		tempo_s * inst.lambdas.increm_lin / 10.0,	// tempo tratti accelerazione lineare
+		tempo_s * inst.lambdas.cost_1 / 10.0,		// tempo tratto m_acc. costante positiva
+		tempo_s * inst.lambdas.cost_2 / 10.0,		// tempo tratto m_acc. costante nulla
+		tempo_s * inst.lambdas.cost_3 / 10.0 };	// tempo tratto m_acc. costante negativa
 
 	// Tempo totale dell'insieme dei tratti 1-2-3
 	double Ta = 2 * tempi[0] + tempi[1];
@@ -27,7 +27,7 @@ void setteTratti(Instructions inst, Servo s) {
 
 	//Condizioni iniziali del primo tratto
 	InfoTratto inext = {
-		inst.ci.angolo_inizio *1.0,
+		inst.ci.angolo_inizio * 1.0,
 		inst.ci.velocita_inizio * 1.0,
 		inst.ci.accelerazione_inizio * 1.0,
 		0, tempi[0] };

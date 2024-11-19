@@ -19,7 +19,7 @@ void treTratti(Instructions ci, Servo *s) {
     unsigned int durata_secondi = ci.tempo_tot_ms;// / 1000;  // Converto da ms a s perchè le formule sono in secondi
 
     char segno{1};
-    if (ci.segno == 0) {                    // Guardo se devo andare in avanti o indietro
+    if (ci.segno < 0) {                    // Guardo se devo andare in avanti o indietro
         segno = -1;                          // devo andare indietro
         // inverto il segno del delta per avere le accelerazioni corrette
     }

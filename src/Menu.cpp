@@ -118,12 +118,12 @@ static Instructions generateInstructions(bool sette_tratti) {
 	std::cin >> tmp;
 	inst.tempo_tot_ms = tmp;
 	if (tmp_delta < 0) {
-		inst.delta_angolo = (unsigned char) - tmp_delta;
-		inst.segno = (unsigned char)0;
+		inst.delta_angolo = (unsigned char)-tmp_delta;
+		inst.segno = -1;
 	}
 	else {
 		inst.delta_angolo = (unsigned char)tmp_delta;
-		inst.segno = (unsigned char)2;
+		inst.segno = 1;
 	}
 
 	return inst;

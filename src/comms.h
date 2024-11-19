@@ -127,7 +127,7 @@ struct Instructions {
     // I coefficienti di tempo dei tratti
     Lambdas lambdas;
     // se 0 = -, se 2 = +
-    unsigned char segno;
+    char segno;
     // Lo spazio da percorrere oppure posizione da raggiungere se la legge è COMANDO_DIRETTO
     unsigned char delta_angolo;
     // Tempo totale richiesto per eseguire la legge di moto
