@@ -17,19 +17,19 @@ void treTratti(Instructions ci, Servo *s) {
     auto M = getMatLAB();
 #endif
     unsigned int durata_secondi = ci.tempo_tot_ms;// / 1000;  // Converto da ms a s perchè le formule sono in secondi
-/*
+
     char segno{1};
-    if (ci.delta_angolo < 0) {               // Guardo se devo andare in avanti o indietro
+    if (ci.segno == 0) {                    // Guardo se devo andare in avanti o indietro
         segno = -1;                          // devo andare indietro
-        ci.delta_angolo = -ci.delta_angolo;  // inverto il segno del delta per avere le accelerazioni corrette
+        // inverto il segno del delta per avere le accelerazioni corrette
     }
-	*/
+	
     // calcolo i tre intervalli di tempo (per A+, A=0, A-)
     double durate[] = {durata_secondi * ci.lambdas.cost_1 / 10.0,
                        durata_secondi * ci.lambdas.cost_2 / 10.0,
                        durata_secondi * ci.lambdas.cost_3 / 10.0};
     // creo una variabile di supporto per non effettuare più volte lo stesso calcolo
-    double tmp = ci.delta_angolo * 2.0 / durata_secondi;
+    double tmp = segno * ci.delta_angolo * 2.0 / durata_secondi;
     // ricavo la velocità massima che raggiungo
     double v_max = tmp / (2 + (-ci.lambdas.cost_1 - ci.lambdas.cost_3) / 10.0);
     // Aggiorno la variabile di supporto "derivandola" rispetto al tempo
@@ -40,7 +40,7 @@ void treTratti(Instructions ci, Servo *s) {
     // Calcolo le accelerazioni A+ e A-
     double acc1 = tmp / (ci.lambdas.cost_1 / 10.0 * tmp2);
     double acc3 = tmp / (ci.lambdas.cost_3 / 10.0 * tmp2);
-    char segno = 1;//ci.segno - 1;
+
     double t{0};  // tempo che si usa per simulare il ciclo
 #if MATLAB_COMPILE
     double ct{0};
