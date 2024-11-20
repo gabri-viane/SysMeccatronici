@@ -17,4 +17,4 @@
 * @param punti Un vettore contenente la lista di posizione dei vari punti simulati
 * @param s Il servo motore da controllare
 */
-void spline(std::vector<double> &tempi, std::vector<double> &punti, Servo s);
+void spline(std::vector<double> &tempi, std::vector<double> &punti, Servo *s);

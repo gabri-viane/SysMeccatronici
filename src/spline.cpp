@@ -34,7 +34,7 @@ static std::vector<double> gaussian_elimination(std::vector<std::vector<double>>
         }
         // Elimina i valori sotto la diagonale
         for (int k = i + 1; k < n; k++) {
-            if (A[k][i] == 0) continue;  // Se è già zero vado vanti
+            if (A[k][i] == 0) continue;  // Se ï¿½ giï¿½ zero vado vanti
             double factor = A[k][i] / A[i][i];
             for (int j = i; j < n; j++) {
                 A[k][j] -= factor * A[i][j];  // Aggiorno la colonna solo se necessario
@@ -54,7 +54,7 @@ static std::vector<double> gaussian_elimination(std::vector<std::vector<double>>
     return X;  // Restituisco il vettore soluzione
 }
 
-void spline(std::vector<double> &tempi, std::vector<double> &punti, Servo s) {
+void spline(std::vector<double> &tempi, std::vector<double> &punti, Servo *s) {
 #if MATLAB_COMPILE
     auto ML = getMatLAB();
 #endif
@@ -90,7 +90,7 @@ void spline(std::vector<double> &tempi, std::vector<double> &punti, Servo s) {
         for (double t = tempi[i]; t < tempi[i + 1]; t += TIME_CONST_S) {
             pos = f(t);
 #if ARDUINO_COMPILE
-            s.write(pos);
+            s->write(pos);
             delay(TIME_CONST_MS);
 #endif
 #if MATLAB_COMPILE

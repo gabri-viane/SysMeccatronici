@@ -119,10 +119,10 @@ bool parseInstruction(CommInstruction* inst, Servo* s, unsigned short* tempoRice
                     treTratti(*inst->inst.swi->Dati_Tre_Sette_Tratti, s);
                     break;
                 case SETTE_TRATTI:
-                    setteTratti(*inst->inst.swi->Dati_Tre_Sette_Tratti, *s);
+                    setteTratti(*inst->inst.swi->Dati_Tre_Sette_Tratti, s);
                     break;
                 case SPLINE:
-                    executeSplineConversion(inst, *s);
+                    executeSplineConversion(inst, s);
                     break;
                 case COMANDO_DIRETTO:
                     //Non implementato
@@ -142,7 +142,7 @@ bool parseInstruction(CommInstruction* inst, Servo* s, unsigned short* tempoRice
     return false;
 }
 
-void executeSplineConversion(CommInstruction* inst, Servo s) {
+void executeSplineConversion(CommInstruction* inst, Servo *s) {
     Point* currentPoint = &(inst->inst.swi->Dati_Spline->points[0]);
     std::vector<double> tempi;
     std::vector<double> spazio;

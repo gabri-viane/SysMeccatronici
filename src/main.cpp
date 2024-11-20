@@ -3,12 +3,12 @@
 #include "three.h"
 
 #if USE_ARDUINO_H
-#include "comms.h"
 #include <Arduino.h>
 #include <Servo.h>
 
 #include <vector>
 
+#include "comms.h"
 #include "communication.h"
 #define SERVO_PIN 5
 Servo s = Servo();
@@ -30,40 +30,39 @@ void setup() {
 
 #if WOKWI_SIMULATION
 
-CondizioniIniziali tre_tratti_ci = { 0,0,0 };
-Lambdas tre_tratti_lmb = { 0,0.3,0.4,0.3 };
-Instructions tre_tratti_inst = { tre_tratti_ci, 5000, tre_tratti_lmb, 180 };
+CondizioniIniziali tre_tratti_ci = {0, 0, 0};
+Lambdas tre_tratti_lmb = {0, 3, 4, 3};
+Instructions tre_tratti_inst = {tre_tratti_ci, tre_tratti_lmb, 1, 5, (unsigned char)180};
 
+CondizioniIniziali sette_tratti_ci = {0, 0, 0};
+Lambdas sette_tratti_lmb = {1, 2, 2, 2};
+Instructions sette_tratti_inst = {sette_tratti_ci, sette_tratti_lmb, 1, 5, (unsigned char)180};
 
-CondizioniIniziali sette_tratti_ci = { 0,0,0 };
-Lambdas sette_tratti_lmb = { 0.1,0.2,0.2,0.2 };
-Instructions sette_tratti_inst = { sette_tratti_ci, 5000, sette_tratti_lmb, 180 };
-
-std::vector<double> tempi = { 0, 1, 3, 5, 8, 15 };
-std::vector<double> punti = { 0, 50, 140 , 70, 120, 180 };
+std::vector<double> tempi = {0, 1, 3, 5, 8, 15};
+std::vector<double> punti = {0, 50, 140, 70, 120, 180};
 #endif
 
 void loop() {
 #if ENABLE_ARDUINO_COMM
     if (parseInstruction(ci, &s, &tempo)) {
-        //Qui ci va il codice quando viene ricevuto e completato con successo un comando
+        // Qui ci va il codice quando viene ricevuto e completato con successo un comando
     }
 #endif
 #if WOKWI_SIMULATION
     // Test TreTratti
     s.write(tre_tratti_ci.angolo_inizio);
     delay(500);
-    treTratti(tre_tratti_inst, s);
+    treTratti(tre_tratti_inst, &s);
     delay(5000);
     // Test SetteTratti
     s.write(sette_tratti_ci.angolo_inizio);
     delay(500);
-    setteTratti(sette_tratti_inst, s);
+    setteTratti(sette_tratti_inst, &s);
     delay(5000);
     // Test Spline
     s.write(punti[0]);
     delay(500);
-    spline(tempi, punti, s);
+    spline(tempi, punti, &s);
     delay(5000);
 #endif
 }
@@ -86,8 +85,8 @@ void loop() {
 #if SIMULATE_COMMUNICATION
 std::atomic<bool> endOfMenu(false);
 
-//Serve come funzione da eseguire in un thread separato su PC
-//per simulare un arduino che riceve e legge i dati.
+// Serve come funzione da eseguire in un thread separato su PC
+// per simulare un arduino che riceve e legge i dati.
 static void arduinoSimulator(Servo* s) {
     char msg[MAX_MESSAGE_LENGTH]{};
     CommInstruction* ci = new CommInstruction(msg);

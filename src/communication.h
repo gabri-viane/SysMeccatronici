@@ -116,7 +116,7 @@ bool parseInstruction(CommInstruction* inst, Servo* s, unsigned short* tempoRice
 * 
 * @warn L'implementazione non è stata testata.
 */
-void executeSplineConversion(CommInstruction* inst, Servo s);
+void executeSplineConversion(CommInstruction* inst, Servo *s);
 
 /*
 * Gestisce la conversione dei dati ricevuti nell'effettiva legge di moto. Ovvero copia i byte rievuti

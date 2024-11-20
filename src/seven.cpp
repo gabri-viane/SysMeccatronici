@@ -12,7 +12,7 @@
 #include "matlab.h"
 #endif
 
-void setteTratti(Instructions inst, Servo s) {
+void setteTratti(Instructions inst, Servo *s) {
 	double tempo_s = inst.tempo_tot_ms / 1000.0;// Converto da ms a s il tempo totale
 	double tempi[] = {
 		tempo_s * inst.lambdas.increm_lin / 10.0,	// tempo tratti accelerazione lineare
@@ -49,7 +49,7 @@ void setteTratti(Instructions inst, Servo s) {
 	inext = tratto7(inext, jerk_max, s);
 }
 
-InfoTratto tratto1(InfoTratto tratto0, double jerk, Servo s) {
+InfoTratto tratto1(InfoTratto tratto0, double jerk, Servo *s) {
 #if MATLAB_COMPILE
 	auto* ML = getMatLAB();
 #endif
@@ -66,7 +66,7 @@ InfoTratto tratto1(InfoTratto tratto0, double jerk, Servo s) {
 		v1 = jt2 + at + tratto0.veloctia0;
 		s1 = jt2 * t / 3 + at * t * 0.5 + tratto0.veloctia0 * t + tratto0.spazio0;
 #if ARDUINO_COMPILE
-		s.write(s1);
+		s->write(s1);
 		delay(TIME_CONST_MS);
 #endif
 #if MATLAB_COMPILE
@@ -80,7 +80,7 @@ InfoTratto tratto1(InfoTratto tratto0, double jerk, Servo s) {
 	return { s1, v1, a1, ct, 0 };
 }
 
-InfoTratto tratto2(InfoTratto tratto1, double jerk, Servo s) {
+InfoTratto tratto2(InfoTratto tratto1, double jerk, Servo *s) {
 #if MATLAB_COMPILE
 	auto* ML = getMatLAB();
 #endif
@@ -96,7 +96,7 @@ InfoTratto tratto2(InfoTratto tratto1, double jerk, Servo s) {
 		v2 = at + tratto1.veloctia0;
 		s2 = at * t * 0.5 + tratto1.veloctia0 * t + tratto1.spazio0;
 #if ARDUINO_COMPILE
-		s.write(s2);
+		s->write(s2);
 		delay(TIME_CONST_MS);
 #endif
 #if MATLAB_COMPILE
@@ -111,7 +111,7 @@ InfoTratto tratto2(InfoTratto tratto1, double jerk, Servo s) {
 }
 
 
-InfoTratto tratto3(InfoTratto tratto2, double jerk, Servo s) {
+InfoTratto tratto3(InfoTratto tratto2, double jerk, Servo *s) {
 #if MATLAB_COMPILE
 	auto* ML = getMatLAB();
 #endif
@@ -128,7 +128,7 @@ InfoTratto tratto3(InfoTratto tratto2, double jerk, Servo s) {
 		v3 = jt2 + at + tratto2.veloctia0;
 		s3 = jt2 * t / 3 + at * t * 0.5 + tratto2.veloctia0 * t + tratto2.spazio0;
 #if ARDUINO_COMPILE
-		s.write(s3);
+		s->write(s3);
 		delay(TIME_CONST_MS);
 #endif
 #if MATLAB_COMPILE
@@ -143,7 +143,7 @@ InfoTratto tratto3(InfoTratto tratto2, double jerk, Servo s) {
 }
 
 
-InfoTratto tratto4(InfoTratto tratto3, double jerk, Servo s) {
+InfoTratto tratto4(InfoTratto tratto3, double jerk, Servo *s) {
 #if MATLAB_COMPILE
 	auto* ML = getMatLAB();
 #endif
@@ -155,7 +155,7 @@ InfoTratto tratto4(InfoTratto tratto3, double jerk, Servo s) {
 	for (; t < tratto3.delta_t; t += TIME_CONST_S, ct += TIME_CONST_S) {
 		s4 = v4 * t + tratto3.spazio0;
 #if ARDUINO_COMPILE
-		s.write(s4);
+		s->write(s4);
 		delay(TIME_CONST_MS);
 #endif
 #if MATLAB_COMPILE
@@ -170,7 +170,7 @@ InfoTratto tratto4(InfoTratto tratto3, double jerk, Servo s) {
 }
 
 
-InfoTratto tratto5(InfoTratto tratto4, double jerk, Servo s) {
+InfoTratto tratto5(InfoTratto tratto4, double jerk, Servo *s) {
 #if MATLAB_COMPILE
 	auto* ML = getMatLAB();
 #endif
@@ -187,7 +187,7 @@ InfoTratto tratto5(InfoTratto tratto4, double jerk, Servo s) {
 		v5 = jt2 + at + tratto4.veloctia0;
 		s5 = jt2 * t / 3 + at * t * 0.5 + tratto4.veloctia0 * t + tratto4.spazio0;
 #if ARDUINO_COMPILE
-		s.write(s5);
+		s->write(s5);
 		delay(TIME_CONST_MS);
 #endif
 #if MATLAB_COMPILE
@@ -201,7 +201,7 @@ InfoTratto tratto5(InfoTratto tratto4, double jerk, Servo s) {
 	return { s5, v5, a5, ct, 0 };
 }
 
-InfoTratto tratto6(InfoTratto tratto5, double jerk, Servo s) {
+InfoTratto tratto6(InfoTratto tratto5, double jerk, Servo *s) {
 #if MATLAB_COMPILE
 	auto* ML = getMatLAB();
 #endif
@@ -217,7 +217,7 @@ InfoTratto tratto6(InfoTratto tratto5, double jerk, Servo s) {
 		v6 = at + tratto5.veloctia0;
 		s6 = at * t * 0.5 + tratto5.veloctia0 * t + tratto5.spazio0;
 #if ARDUINO_COMPILE
-		s.write(s6);
+		s->write(s6);
 		delay(TIME_CONST_MS);
 #endif
 #if MATLAB_COMPILE
@@ -232,7 +232,7 @@ InfoTratto tratto6(InfoTratto tratto5, double jerk, Servo s) {
 }
 
 
-InfoTratto tratto7(InfoTratto tratto6, double jerk, Servo s) {
+InfoTratto tratto7(InfoTratto tratto6, double jerk, Servo *s) {
 #if MATLAB_COMPILE
 	auto* ML = getMatLAB();
 #endif
@@ -249,7 +249,7 @@ InfoTratto tratto7(InfoTratto tratto6, double jerk, Servo s) {
 		v7 = jt2 + at + tratto6.veloctia0;
 		s7 = jt2 * t / 3 + at * t * 0.5 + tratto6.veloctia0 * t + tratto6.spazio0;
 #if ARDUINO_COMPILE
-		s.write(s7);
+		s->write(s7);
 		delay(TIME_CONST_MS);
 #endif
 #if MATLAB_COMPILE
