@@ -12,24 +12,24 @@
 #include "matlab.h"
 #endif
 
-void setteTratti(Instructions inst, Servo *s) {
+void setteTratti(Instructions inst, Servo* s) {
 	double tempo_s = inst.tempo_tot_ms / 1000.0;// Converto da ms a s il tempo totale
 	double tempi[] = {
-		tempo_s * inst.lambdas.increm_lin / 10.0,	// tempo tratti accelerazione lineare
-		tempo_s * inst.lambdas.cost_1 / 10.0,		// tempo tratto m_acc. costante positiva
-		tempo_s * inst.lambdas.cost_2 / 10.0,		// tempo tratto m_acc. costante nulla
-		tempo_s * inst.lambdas.cost_3 / 10.0 };	// tempo tratto m_acc. costante negativa
+		tempo_s * inst.lambdas.increm_lin ,	// tempo tratti accelerazione lineare
+		tempo_s * inst.lambdas.cost_1 ,		// tempo tratto m_acc. costante positiva
+		tempo_s * inst.lambdas.cost_2 ,		// tempo tratto m_acc. costante nulla
+		tempo_s * inst.lambdas.cost_3 };	// tempo tratto m_acc. costante negativa
 
 	// Tempo totale dell'insieme dei tratti 1-2-3
 	double Ta = 2 * tempi[0] + tempi[1];
 	// Calcolo il jerk massimo che ho per arrivare all'angolo richiesto
-	double jerk_max = 1.0 * inst.segno * inst.delta_angolo / ((tempo_s - Ta) * (Ta - tempi[0]) * tempi[0]);
+	double jerk_max = 1.0 * inst.delta_angolo / ((tempo_s - Ta) * (Ta - tempi[0]) * tempi[0]);
 
 	//Condizioni iniziali del primo tratto
 	InfoTratto inext = {
-		inst.ci.angolo_inizio * 1.0,
-		inst.ci.velocita_inizio * 1.0,
-		inst.ci.accelerazione_inizio * 1.0,
+		inst.ci.angolo_inizio ,
+		inst.ci.velocita_inizio ,
+		inst.ci.accelerazione_inizio ,
 		0, tempi[0] };
 
 	//Ad ogni tratto aggiorno le condizioni iniziali per il prossimo tratto
@@ -49,7 +49,7 @@ void setteTratti(Instructions inst, Servo *s) {
 	inext = tratto7(inext, jerk_max, s);
 }
 
-InfoTratto tratto1(InfoTratto tratto0, double jerk, Servo *s) {
+InfoTratto tratto1(InfoTratto tratto0, double jerk, Servo* s) {
 #if MATLAB_COMPILE
 	auto* ML = getMatLAB();
 #endif
@@ -80,7 +80,7 @@ InfoTratto tratto1(InfoTratto tratto0, double jerk, Servo *s) {
 	return { s1, v1, a1, ct, 0 };
 }
 
-InfoTratto tratto2(InfoTratto tratto1, double jerk, Servo *s) {
+InfoTratto tratto2(InfoTratto tratto1, double jerk, Servo* s) {
 #if MATLAB_COMPILE
 	auto* ML = getMatLAB();
 #endif
@@ -111,7 +111,7 @@ InfoTratto tratto2(InfoTratto tratto1, double jerk, Servo *s) {
 }
 
 
-InfoTratto tratto3(InfoTratto tratto2, double jerk, Servo *s) {
+InfoTratto tratto3(InfoTratto tratto2, double jerk, Servo* s) {
 #if MATLAB_COMPILE
 	auto* ML = getMatLAB();
 #endif
@@ -143,7 +143,7 @@ InfoTratto tratto3(InfoTratto tratto2, double jerk, Servo *s) {
 }
 
 
-InfoTratto tratto4(InfoTratto tratto3, double jerk, Servo *s) {
+InfoTratto tratto4(InfoTratto tratto3, double jerk, Servo* s) {
 #if MATLAB_COMPILE
 	auto* ML = getMatLAB();
 #endif
@@ -170,7 +170,7 @@ InfoTratto tratto4(InfoTratto tratto3, double jerk, Servo *s) {
 }
 
 
-InfoTratto tratto5(InfoTratto tratto4, double jerk, Servo *s) {
+InfoTratto tratto5(InfoTratto tratto4, double jerk, Servo* s) {
 #if MATLAB_COMPILE
 	auto* ML = getMatLAB();
 #endif
@@ -201,7 +201,7 @@ InfoTratto tratto5(InfoTratto tratto4, double jerk, Servo *s) {
 	return { s5, v5, a5, ct, 0 };
 }
 
-InfoTratto tratto6(InfoTratto tratto5, double jerk, Servo *s) {
+InfoTratto tratto6(InfoTratto tratto5, double jerk, Servo* s) {
 #if MATLAB_COMPILE
 	auto* ML = getMatLAB();
 #endif
@@ -232,7 +232,7 @@ InfoTratto tratto6(InfoTratto tratto5, double jerk, Servo *s) {
 }
 
 
-InfoTratto tratto7(InfoTratto tratto6, double jerk, Servo *s) {
+InfoTratto tratto7(InfoTratto tratto6, double jerk, Servo* s) {
 #if MATLAB_COMPILE
 	auto* ML = getMatLAB();
 #endif

@@ -90,9 +90,9 @@ motori generalmente in dotazione non accettano frazioni di angolo come
 comando.
 */
 struct CondizioniIniziali {
-    unsigned char angolo_inizio; //float
-    char velocita_inizio; //float
-    char accelerazione_inizio; //double
+    float angolo_inizio; //float
+    float velocita_inizio; //float
+    float accelerazione_inizio; //double
 };
 
 /*
@@ -118,10 +118,10 @@ un coefficiente di 0.2 deve essere salvato come 2.
 Questo per permettere l'invio in modo più semplice ad arduino.
 */
 struct Lambdas {
-    char increm_lin; //float
-    char cost_1; //float
-    char cost_2; //float
-    char cost_3; //float
+    float increm_lin; //float
+    float cost_1; //float
+    float cost_2; //float
+    float cost_3; //float
 };
 
 /*
@@ -132,12 +132,10 @@ struct Instructions {
     CondizioniIniziali ci;
     // I coefficienti di tempo dei tratti
     Lambdas lambdas;
-    // se 0 = -, se 2 = +
-    char segno;
     // Lo spazio da percorrere oppure posizione da raggiungere se la legge è COMANDO_DIRETTO
-    unsigned char delta_angolo;
+    long delta_angolo;
     // Tempo totale richiesto per eseguire la legge di moto
-    unsigned char tempo_tot_ms;
+    unsigned int tempo_tot_ms;
 };
 
 /*
