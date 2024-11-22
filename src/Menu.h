@@ -34,12 +34,12 @@ public:
 	* Gestisce le richieste per eseguire una simulazione
 	* di una legge di moto sette tratti.
 	*/
-	void handleSetteTratti() const;
+	void handleSetteTratti();
 	/**
 	* Gestisce le richieste per eseguire una simulazione
 	* tramite spline.
 	*/
-	void handlerSplineCubica() const;
+	void handlerSplineCubica();
 };
 
 #endif

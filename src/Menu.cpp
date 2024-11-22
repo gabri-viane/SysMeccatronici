@@ -77,13 +77,10 @@ le istruzioni iniziali.
 static Instructions generateInstructions(bool sette_tratti) {
 	CondizioniIniziali ci{ 0,0,0 };
 	std::cout << "\n------------------\nCONDIZIONI INIZIALI\n------------------\n";
-	int tmp;
 	std::cout << "\nAngolo iniziale (°): ";
-	std::cin >> tmp;
-	ci.angolo_inizio = tmp;
+	std::cin >> ci.angolo_inizio;
 	std::cout << "\nVelocita' iniziale (°/s): ";
-	std::cin >> tmp;
-	ci.velocita_inizio = tmp;
+	std::cin >> ci.velocita_inizio;
 	if (sette_tratti) {
 		std::cout << "\nAccelerazione iniziale (°/s^2): ";
 		std::cin >> ci.accelerazione_inizio;
@@ -96,35 +93,23 @@ static Instructions generateInstructions(bool sette_tratti) {
 		std::cin >> lmbs.increm_lin;
 	}
 	std::cout << "\nCoeff. acc.cost. T1: ";
-	std::cin >> tmp;
-	lmbs.cost_1 = tmp;
+	std::cin >> lmbs.cost_1;
 	std::cout << "\nCoeff. acc.cost. T2: ";
-	std::cin >> tmp;
-	lmbs.cost_2 = tmp;
+	std::cin >> lmbs.cost_2;
 	std::cout << "\nCoeff. acc.cost. T3: ";
-	std::cin >> tmp;
-	lmbs.cost_3 = tmp;
+	std::cin >>	lmbs.cost_3;
 
 	if ((lmbs.cost_1 + lmbs.cost_2 + lmbs.cost_3 + lmbs.increm_lin * 4) != 10) {
 		std::cout << "\n!! I coefficienti scelti non hanno somma pari ad 1 !!\n";
 	}
 
-	Instructions inst{ ci,lmbs,0,0,0 };
+	Instructions inst{ ci,lmbs,0,0 };
 	int tmp_delta;
 	std::cout << "\n------------------\nDATI\n------------------\n";
 	std::cout << "\nDelta angolo da percorrere (°): ";
 	std::cin >> tmp_delta;
-	std::cout << "\nTempo di percorrenza (s): ";
-	std::cin >> tmp;
-	inst.tempo_tot_ms = tmp;
-	if (tmp_delta < 0) {
-		inst.delta_angolo = (unsigned char)-tmp_delta;
-		inst.segno = -1;
-	}
-	else {
-		inst.delta_angolo = (unsigned char)tmp_delta;
-		inst.segno = 1;
-	}
+	std::cout << "\nTempo di percorrenza (ms): ";
+	std::cin >> inst.tempo_tot_ms;
 
 	return inst;
 }
@@ -158,7 +143,7 @@ void Menu::handleTreTratti() {
 	std::cout << "\n\n-------------------------\n\tCOMPLETATO\n-------------------------\n\n";
 }
 
-void Menu::handleSetteTratti() const {
+void Menu::handleSetteTratti() {
 #if MATLAB_COMPILE
 	std::cout << "Inserisci il nome del file MATLAB da generare: ";
 	std::string nome_file;
@@ -171,7 +156,7 @@ void Menu::handleSetteTratti() const {
 
 	Instructions inst = generateInstructions(true);
 
-	setteTratti(inst, s);
+	setteTratti(inst, &s);
 #if MATLAB_COMPILE
 	M->writeData();
 	M->flushData();
@@ -188,7 +173,7 @@ void Menu::handleSetteTratti() const {
 }
 
 
-void Menu::handlerSplineCubica() const {
+void Menu::handlerSplineCubica() {
 #if MATLAB_COMPILE
 	std::cout << "Inserisci il nome del file MATLAB da generare: ";
 	std::string nome_file;
@@ -221,7 +206,7 @@ void Menu::handlerSplineCubica() const {
 			index++;
 		}
 	}
-	spline(tempi, punti, s);
+	spline(tempi, punti, &s);
 #if MATLAB_COMPILE
 	M->writeData();
 	M->flushData();

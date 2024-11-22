@@ -5,7 +5,7 @@
 *************************************/
 
 //Se impostato ad 1 abilita la compilazione del progetto per PC, altrimenti per Arduino
-#define COMPILE_FOR_PC 0
+#define COMPILE_FOR_PC 1
 
 //Permette di simulare la comunicazione con Arduino, ovvero se arduino non è connesso al computer
 //ma si vuole ugualmente testare il programma e l'invio dei dati.
@@ -14,11 +14,11 @@
 
 //Se abilitato include tutta la gestione nella parte PC e nella parte arduino per la compilazione del
 //codice di comunicazione e elaborazione dei comandi
-#define ENABLE_ARDUINO_COMM 0
+#define ENABLE_ARDUINO_COMM 1
 
 //Per simulare il funzionamento con il plugin wokwi impostare ad 1 questa define
 //inoltre il valore di COMPILE_FOR_PC deve essere 0
-#define ENABLE_WOKWI_SIMULATION 1
+#define ENABLE_WOKWI_SIMULATION 0
 
 // Definisce il massimo numero di punti per costruire la spline cubica
 #define MAX_LENGTH_POINTS 10
