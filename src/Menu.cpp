@@ -99,7 +99,7 @@ static Instructions generateInstructions(bool sette_tratti) {
 	std::cout << "\nCoeff. acc.cost. T3: ";
 	std::cin >>	lmbs.cost_3;
 
-	if ((lmbs.cost_1 + lmbs.cost_2 + lmbs.cost_3 + lmbs.increm_lin * 4) != 10) {
+	if ((lmbs.cost_1 + lmbs.cost_2 + lmbs.cost_3 + lmbs.increm_lin * 4) != 1) {
 		std::cout << "\n!! I coefficienti scelti non hanno somma pari ad 1 !!\n";
 	}
 
