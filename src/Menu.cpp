@@ -88,26 +88,31 @@ static Instructions generateInstructions(bool sette_tratti) {
 
 	Lambdas lmbs{};
 	std::cout << "\n------------------\nCOEFF. TRATTI\n------------------\n";
-	if (sette_tratti) {
-		std::cout << "\nCoeff. tratti acc. lineare : ";
-		std::cin >> lmbs.increm_lin;
-	}
-	std::cout << "\nCoeff. acc.cost. T1: ";
-	std::cin >> lmbs.cost_1;
-	std::cout << "\nCoeff. acc.cost. T2: ";
-	std::cin >> lmbs.cost_2;
-	std::cout << "\nCoeff. acc.cost. T3: ";
-	std::cin >>	lmbs.cost_3;
+	bool errore = true;
+	do {
+		if (sette_tratti) {
+			std::cout << "\nCoeff. tratti acc. lineare : ";
+			std::cin >> lmbs.increm_lin;
+		}
+		std::cout << "\nCoeff. acc.cost. T1: ";
+		std::cin >> lmbs.cost_1;
+		std::cout << "\nCoeff. acc.cost. T2: ";
+		std::cin >> lmbs.cost_2;
+		std::cout << "\nCoeff. acc.cost. T3: ";
+		std::cin >> lmbs.cost_3;
 
-	if ((lmbs.cost_1 + lmbs.cost_2 + lmbs.cost_3 + lmbs.increm_lin * 4) != 1) {
-		std::cout << "\n!! I coefficienti scelti non hanno somma pari ad 1 !!\n";
-	}
+		if ((lmbs.cost_1 + lmbs.cost_2 + lmbs.cost_3 + lmbs.increm_lin * 4) != 1) {
+			std::cout << "\n!! I coefficienti scelti non hanno somma pari ad 1 !!\n";
+		}
+		else {
+			errore = false;
+		}
+	} while (errore);
 
 	Instructions inst{ ci,lmbs,0,0 };
-	int tmp_delta;
 	std::cout << "\n------------------\nDATI\n------------------\n";
 	std::cout << "\nDelta angolo da percorrere (°): ";
-	std::cin >> tmp_delta;
+	std::cin >> inst.delta_angolo;
 	std::cout << "\nTempo di percorrenza (ms): ";
 	std::cin >> inst.tempo_tot_ms;
 
