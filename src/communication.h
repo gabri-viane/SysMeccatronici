@@ -191,6 +191,11 @@ bool communicateData(const char* portSpecifier, char* str, const unsigned int si
 * Utilizzata solo per testare la comunicazione
 */
 void TestCommunication();
+
+/*
+* Utilizzata solo per testare la comunicazione
+*/
+void TestCommunication2();
 #endif
 
 #endif

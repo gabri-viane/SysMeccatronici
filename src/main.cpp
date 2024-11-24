@@ -104,7 +104,7 @@ int main() {
     s.attach(4);
     std::thread arduino(arduinoSimulator, &s);
 #endif
-
+    //TestCommunication2();
     // Creo un nuovo menù
     Menu m = Menu();
     // Faccio partire il ciclo di gestione

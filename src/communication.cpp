@@ -65,56 +65,56 @@ static void executeInstruction(CommInstruction* inst) {
 
 bool parseInstruction(CommInstruction* inst, Servo* s, unsigned short* tempoRicevuto) {
     char data;
-    switch (inst->status) {//controllo lo status del messaggio che sto ricevendo
+    switch (inst->status) {  // controllo lo status del messaggio che sto ricevendo
         case STATUS_VOID:
-            if (Serial.available()) {//Solo se ho dati nella seriale proseguo (uguale per tutti i casi)
-                data = Serial.read();//Leggo il byte
-                if (data == STARTING_STREAM_CHAR) {//Se è il byte di inizio
-                    inst->status = STATUS_START_READING;//Mi porto ad aspettare il secondo byte di inizio (la conferma)
+            if (Serial.available()) {                     // Solo se ho dati nella seriale proseguo (uguale per tutti i casi)
+                data = Serial.read();                     // Leggo il byte
+                if (data == STARTING_STREAM_CHAR) {       // Se è il byte di inizio
+                    inst->status = STATUS_START_READING;  // Mi porto ad aspettare il secondo byte di inizio (la conferma)
                 }
             }
             break;
         case STATUS_START_READING:
             if (Serial.available()) {
-                data = Serial.read();//Leggo il byte
-                if (data == STARTING_STREAM_CHAR) {//Se il byte che ricevo è il secondo byte di inizio 
-                    inst->status = STATUS_READING;//mi porto in lettura del messaggio
+                data = Serial.read();                // Leggo il byte
+                if (data == STARTING_STREAM_CHAR) {  // Se il byte che ricevo è il secondo byte di inizio
+                    inst->status = STATUS_READING;   // mi porto in lettura del messaggio
                 } else {
-                    inst->status = STATUS_VOID;//Altrimenti non è un messaggio di mia competenza e torno in attesa (VOID)
+                    inst->status = STATUS_VOID;  // Altrimenti non è un messaggio di mia competenza e torno in attesa (VOID)
                 }
             }
             break;
         case STATUS_READING:
             if (Serial.available()) {
                 data = Serial.read();
-                if (inst->size == 0) { //Se non ho ancora ricevuto la dimensione del messaggio
-                    inst->size = (unsigned char)data; //imposto il byte letto come dimensione del messaggio
+                if (inst->size == 0) {                 // Se non ho ancora ricevuto la dimensione del messaggio
+                    inst->size = (unsigned char)data;  // imposto il byte letto come dimensione del messaggio
                     // In questo caso sto leggendo il primo valore del messaggio
                     // ovvero la lunghezza che mi verrà inviata
                     return false;
                 }
                 if (data == CLOSING_STREAM_CHAR && inst->sizeReceived == inst->size) {  // controllo di aver almeno ricevuto tutto il messaggio
-                    inst->status = STATUS_SHOULD_COMPLETE;//Se ho ricevuto tutto il messaggio e il carattere corrente è il carattere di chiusura mi porto in attesa di completamento
+                    inst->status = STATUS_SHOULD_COMPLETE;                              // Se ho ricevuto tutto il messaggio e il carattere corrente è il carattere di chiusura mi porto in attesa di completamento
                 }
-                inst->message[inst->sizeReceived] = data; //salvo il dato ricevuto nel messaggio
-                inst->sizeReceived++;//incremento il numero di byte ricevuti
+                inst->message[inst->sizeReceived] = data;  // salvo il dato ricevuto nel messaggio
+                inst->sizeReceived++;                      // incremento il numero di byte ricevuti
             }
             break;
         case STATUS_SHOULD_COMPLETE:
             if (Serial.available()) {
                 data = Serial.read();
-                if (data == CLOSING_STREAM_CHAR) {//Se ricevo anche il secondo byte che indica la chiusura del messaggio
-                    inst->status = STATUS_COMPLETED;//Mi porto allo stato completo
+                if (data == CLOSING_STREAM_CHAR) {    // Se ricevo anche il secondo byte che indica la chiusura del messaggio
+                    inst->status = STATUS_COMPLETED;  // Mi porto allo stato completo
                 } else {
-                    inst->status = STATUS_READING; //Altrimenti ritorno in lettura
+                    inst->status = STATUS_READING;  // Altrimenti ritorno in lettura
                 }
                 inst->message[inst->sizeReceived] = data;
                 inst->sizeReceived++;
             }
             break;
-        case STATUS_COMPLETED://Ho finito di leggere il messaggio (nel loop precedente)
-            executeInstruction(inst);//Leggo il messaggio e lo deserializzo di nuovo in una struct
-            switch (inst->inst.swi->law) {//eseguo la legge di moto ricevuta
+        case STATUS_COMPLETED:              // Ho finito di leggere il messaggio (nel loop precedente)
+            executeInstruction(inst);       // Leggo il messaggio e lo deserializzo di nuovo in una struct
+            switch (inst->inst.swi->law) {  // eseguo la legge di moto ricevuta
                 case TRE_TRATTI:
                     treTratti(*inst->inst.swi->Dati_Tre_Sette_Tratti, s);
                     break;
@@ -125,53 +125,54 @@ bool parseInstruction(CommInstruction* inst, Servo* s, unsigned short* tempoRice
                     executeSplineConversion(inst, s);
                     break;
                 case COMANDO_DIRETTO:
-                    //Non implementato
+                    // Non implementato
                     break;
             }
-            //Elimino l'istruzione
+            // Elimino l'istruzione
             delete inst->inst.swi;
-            //Trono nello stato VOID
+            // Trono nello stato VOID
             inst->status = STATUS_VOID;
-            //Pulisco il buffer
+            // Pulisco il buffer
             memset((void*)inst->message, (char)0, inst->sizeReceived);
-            //Riporto nello stato iniziale
+            // Riporto nello stato iniziale
             inst->sizeReceived = 0;
             inst->size = 0;
-            return true;//Restituisco true solo se ho completato ed eseguito un messaggio
+            return true;  // Restituisco true solo se ho completato ed eseguito un messaggio
     }
     return false;
 }
 
-void executeSplineConversion(CommInstruction* inst, Servo *s) {
-    Point* currentPoint = &(inst->inst.swi->Dati_Spline->points[0]);
+void executeSplineConversion(CommInstruction* inst, Servo* s) {
     std::vector<double> tempi;
     std::vector<double> spazio;
-    for (short i = 0; i < MAX_LENGTH_POINTS; i++, currentPoint++) {
-        tempi.push_back(currentPoint->time);
-        spazio.push_back(currentPoint->position);
+    for (short i = 0; i < inst->inst.swi->Dati_Spline->size; i++) {
+        Point currentPoint = inst->inst.swi->Dati_Spline->points[i];
+        tempi.push_back(currentPoint.time);
+        spazio.push_back(currentPoint.position);
     }
     spline(tempi, spazio, s);
 }
 
 ServoWriteInst* parseServoWrite(CommInstruction* ci) {
     ServoWriteInst* result{nullptr};
-    //all'indice 2 del messaggio è presente il codice della legge di moto inviata
-    //all'indice 1 del messaggio è presente il pin del servo motore da controllare
-    switch (ci->message[2]) {//controllo cosa mi è stato inviato e ricreo in memoria i dati della legge di moto
+    // all'indice 2 del messaggio è presente il codice della legge di moto inviata
+    // all'indice 1 del messaggio è presente il pin del servo motore da controllare
+    switch (ci->message[2]) {  // controllo cosa mi è stato inviato e ricreo in memoria i dati della legge di moto
         case LawType::TRE_TRATTI:
             result = new ServoWriteInst(ci->message[1], LawType::TRE_TRATTI);
-            //copio i dati della tre tratti
+            // copio i dati della tre tratti
             memcpy((void*)(result->Dati_Tre_Sette_Tratti), (void*)(&(ci->message[3])), sizeof(Instructions));
             break;
         case LawType::SETTE_TRATTI:
             result = new ServoWriteInst(ci->message[1], LawType::SETTE_TRATTI);
-            //copio i dati della sette tratti
+            // copio i dati della sette tratti
             memcpy((void*)(result->Dati_Tre_Sette_Tratti), (void*)(&(ci->message[3])), sizeof(Instructions));
             break;
         case LawType::SPLINE:
             result = new ServoWriteInst(ci->message[1], LawType::SPLINE);
-            //copio i dati dell spline
-            memcpy((void*)(result->Dati_Spline), (void*)(&(ci->message[3])), sizeof(Instructions));
+            result->Dati_Spline->size = ci->message[3];
+            // copio i dati dell spline
+            memcpy((void*)&(result->Dati_Spline->points[0]), (void*)(&(ci->message[4])), sizeof(Point) * result->Dati_Spline->size);
             break;
     }
     return result;
@@ -227,19 +228,21 @@ void sendServoInstruction(const char* portSpecifier, CommDataInstruction* inst) 
     unsigned int size{3};
     // SE LA LEGGE E' SPLINE:
     if (inst->swi->law == SPLINE) {
-        // 6: lunghezza della lista di dati che devi inviare (il numero di punti)
+        // 4: lunghezza della lista di dati che devi inviare (il numero di punti)
         instruction[3] = inst->swi->Dati_Spline->size;
         size++;
 
         // Calcolo al dimensione totale delle cose da copiare
-        size += instruction[3] * sizeof(Point);  // Ovvero quanti byte occupano i punti
-
-        for (int i = 0; i < inst->swi->Dati_Spline->size; i++) {
-            // Copio i punti nell'array
-            memcpy((void*)instruction[i * sizeof(Point)],        // inserisco il puntatore alla posizione corrente dell'array da inviare
-                   (void*)&(inst->swi->Dati_Spline->points[i]),  // il puntatore al punto da copiare
-                   sizeof(Point));                               // La dimensione da copiare: ovvero il punto
-        }
+        size += instruction[3] * sizeof(Point);              // Ovvero quanti byte occupano i punti
+        memcpy((void*)&(instruction[4]),                     // Destinazione: messaggio che devo inviare
+               (void*)&(inst->swi->Dati_Spline->points[0]),  //
+               inst->swi->Dati_Spline->size * sizeof(Point));
+        /* for (int i = 0; i < inst->swi->Dati_Spline->size; i++) {
+             // Copio i punti nell'array
+             memcpy((void*)instruction[i * sizeof(Point)],        // inserisco il puntatore alla posizione corrente dell'array da inviare
+                    (void*)&(inst->swi->Dati_Spline->points[i]),  // il puntatore al punto da copiare
+                    sizeof(Point));                               // La dimensione da copiare: ovvero il punto
+         }*/
     } else if (inst->swi->law == COMANDO_DIRETTO) {
         instruction[3] = inst->swi->directDrive;
         size++;
@@ -318,7 +321,7 @@ bool communicateData(const char* portSpecifier, char* str, const unsigned int si
         }
         // Faccio una pausa per permettere ad arduino di ricevere ed elaborare parte del
         //  messaggio per liberare il buffer
-        std::this_thread::sleep_for(std::chrono::milliseconds(10));
+        std::this_thread::sleep_for(std::chrono::milliseconds(20));
     }
     // Ora devo inviare i dati rimanenti se ho un resto.
     if (resto > 0) {
@@ -336,6 +339,19 @@ bool communicateData(const char* portSpecifier, char* str, const unsigned int si
 void TestCommunication() {
     CommDataInstruction* cdi = requestServoInstructionData(3, {0, 0, 0}, 180, {2, 6, 2, 0}, 5000, LawType::TRE_TRATTI);
     sendServoInstruction(COM4, cdi);
+    // char str[] = {5, 0, 4};
+    // communicateData(COM4, str, 3);
+    //  ReadComPort();
+}
+
+void TestCommunication2() {
+    // CommDataInstruction* cdi = requestServoInstructionData(5, { 0, 0, 0 }, 180, { 0, 0.2, 0.6, 0.2 }, 5000, LawType::TRE_TRATTI);
+    // CommDataInstruction* cdi = requestServoInstructionData(5, { 0, 0, 0 }, 180, { 0.15, 0.1, 0.2, 0.1 }, 5000, LawType::SETTE_TRATTI);
+
+    Point points[] = {{0, 0}, {1, 20}, {2, 130}, {3, 50}, {5, 180}};
+    CommDataInstruction* cdi = requestServoInstructionData(5, 5, points);
+    // sendServoInstruction("\\\\.\\COM11", cdi);
+    sendServoInstruction("COM4", cdi);
     // char str[] = {5, 0, 4};
     // communicateData(COM4, str, 3);
     //  ReadComPort();
