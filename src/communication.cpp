@@ -345,12 +345,12 @@ void TestCommunication() {
 }
 
 void TestCommunication2() {
-    // CommDataInstruction* cdi = requestServoInstructionData(5, { 0, 0, 0 }, 180, { 0, 0.2, 0.6, 0.2 }, 5000, LawType::TRE_TRATTI);
+    CommDataInstruction* cdi = requestServoInstructionData(5, { 0, 0, 0 }, 180, { 0, 0.2, 0.6, 0.2 }, 5000, LawType::TRE_TRATTI);
     // CommDataInstruction* cdi = requestServoInstructionData(5, { 0, 0, 0 }, 180, { 0.15, 0.1, 0.2, 0.1 }, 5000, LawType::SETTE_TRATTI);
 
     Point points[] = {{0, 0}, {1, 20}, {2, 130}, {3, 50}, {5, 180}};
-    CommDataInstruction* cdi = requestServoInstructionData(5, 5, points);
-    // sendServoInstruction("\\\\.\\COM11", cdi);
+    //CommDataInstruction* cdi = requestServoInstructionData(5, 5, points);
+    //sendServoInstruction("\\\\.\\COM11", cdi);
     sendServoInstruction("COM4", cdi);
     // char str[] = {5, 0, 4};
     // communicateData(COM4, str, 3);

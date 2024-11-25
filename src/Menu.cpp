@@ -206,8 +206,10 @@ void Menu::handlerSplineCubica() {
 			std::cout << "Spazio (" << index << ") :";
 			std::cin >> p;
 			tempi.push_back(t);
-			punti.push_back(p);
+			punti.push_back(p); 
+#if ENABLE_ARDUINO_COMM
 			puntiComm[index] = { t,p };
+#endif
 			index++;
 		}
 	}
