@@ -78,9 +78,9 @@ void spline(std::vector<double> &tempi, std::vector<double> &punti, Servo *s) {
         c.push_back(coeffs);
     }
 
-    // Example of using the function f for interpolation
+    //Genero le funzioni e calcolo i valori
     for (int i = 0; i < numero_punti - 1; i++) {
-        // Define f(x) for the interval tempi[i] to tempi[i+1]
+        // Definisco la funzion f(x) per l'intervallo che va da tempi[i] a tempi[i+1]
         auto f = [&](double x) {
             return c[i][0] * pow(x, 3) + c[i][1] * pow(x, 2) + c[i][2] * x + c[i][3];
         };
