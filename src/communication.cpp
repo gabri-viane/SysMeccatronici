@@ -243,6 +243,9 @@ void sendServoInstruction(const char* portSpecifier, CommDataInstruction* inst) 
                     (void*)&(inst->swi->Dati_Spline->points[i]),  // il puntatore al punto da copiare
                     sizeof(Point));                               // La dimensione da copiare: ovvero il punto
          }*/
+        std::cout << "L'invio dei dati ad Arduino è disabilitato per la Spline." << std::endl;
+        delete inst;
+        return;
     } else if (inst->swi->law == COMANDO_DIRETTO) {
         instruction[3] = inst->swi->directDrive;
         size++;

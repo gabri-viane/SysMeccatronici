@@ -14,7 +14,7 @@
 
 //Se abilitato include tutta la gestione nella parte PC e nella parte arduino per la compilazione del
 //codice di comunicazione e elaborazione dei comandi
-#define ENABLE_ARDUINO_COMM 0
+#define ENABLE_ARDUINO_COMM 1
 
 //Per simulare il funzionamento con il plugin wokwi impostare ad 1 questa define
 //inoltre il valore di COMPILE_FOR_PC deve essere 0
